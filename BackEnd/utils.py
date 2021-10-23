@@ -2,15 +2,15 @@ import base64
 import numpy as np
 
 # Funcion que decodifica una imagen de base 64
-def decodeB64Image(image):
-    with open("image.jpg", "wb") as f:
+def decodeB64Image(image, imageName):
+    with open(imageName, "wb") as f:
         f.write(base64.b64decode(image))
     
     return
 
 # Funcion que codifica una imagen en base 64
-def encodeB64Image():
-    with open("image.jpg", "rb") as f:
+def encodeB64Image(imageName):
+    with open(imageName, "rb") as f:
         b64Str = base64.b64encode(f.read())
 
     return b64Str

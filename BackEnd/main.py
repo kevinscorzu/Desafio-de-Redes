@@ -1,24 +1,19 @@
 from flask import Flask, request, jsonify
-import numpy as np
-import cv2
 import os
 import utils
+import operations as op
 
 app = Flask(__name__)
 
 # Funcion que realiza una ecualizacion de histograma de una imagen
 @app.route('/histogram-equalization/', methods = ['POST'])
-def histogramEqualization():
+def histogramEqualizationHandler():
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
-    
-    B = cv2.equalizeHist(A)
+    op.histogramEqualization("image.jpg", "image.jpg")
 
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -26,20 +21,13 @@ def histogramEqualization():
 
 # Funcion que calcula la transformada discreta de fourier de una imagen
 @app.route('/discrete-fourier-transform/', methods = ['POST'])
-def discreteFourierTransform():
+def discreteFourierTransformHandler():
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.discreteFourierTransform("image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    F = utils.convertComplexImage(np.log(1 + np.abs(F)))
-
-    cv2.imwrite("image.jpg", F)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -47,22 +35,13 @@ def discreteFourierTransform():
 
 # Funcion que calcula el modulo de la transformada discreta de fourier de una imagen
 @app.route('/discrete-fourier-transform-shift/', methods = ['POST'])
-def discreteFourierTransformShift():
+def discreteFourierTransformShiftHandler():
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.discreteFourierTransformShift("image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    Fshift = utils.convertComplexImage(np.log(1 + np.abs(Fshift)))
-
-    cv2.imwrite("image.jpg", Fshift)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -70,33 +49,13 @@ def discreteFourierTransformShift():
 
 # Funcion que aplica un filtro ideal pasa bajas a una imagen
 @app.route('/low-pass-ideal-filter/<int:D0>/', methods = ['POST'])
-def lowPassIdealFilter(D0):
+def lowPassIdealFilterHandler(D0):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.lowPassIdealFilter(D0, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.less_equal(D, D0)
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -104,33 +63,13 @@ def lowPassIdealFilter(D0):
 
 # Funcion que aplica un filtro ideal pasa altas a una imagen
 @app.route('/high-pass-ideal-filter/<int:D0>/', methods = ['POST'])
-def highPassIdealFilter(D0):
+def highPassIdealFilterHandler(D0):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.highPassIdealFilter(D0, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.greater(D, D0)
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -138,33 +77,13 @@ def highPassIdealFilter(D0):
 
 # Funcion que aplica un filtro gausiano pasa bajas a una imagen
 @app.route('/low-pass-gaussian-filter/<int:sigma>/', methods = ['POST'])
-def lowPassGaussianFilter(sigma):
+def lowPassGaussianFilterHandler(sigma):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.lowPassGaussianFilter(sigma, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.exp(np.divide(np.dot(np.power(D, 2), -1), 2 * (sigma ** 2)))
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -172,33 +91,13 @@ def lowPassGaussianFilter(sigma):
 
 # Funcion que aplica un filtro gausiano pasa altas a una imagen
 @app.route('/high-pass-gaussian-filter/<int:sigma>/', methods = ['POST'])
-def highPassGaussianFilter(sigma):
+def highPassGaussianFilterHandler(sigma):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.highPassGaussianFilter(sigma, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.subtract(1, np.exp(np.divide(np.dot(np.power(D, 2), -1), 2 * (sigma ** 2))))
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -206,33 +105,13 @@ def highPassGaussianFilter(sigma):
 
 # Funcion que aplica un filtro butterworth pasa bajas a una imagen
 @app.route('/low-pass-butterworth-filter/<int:D0>/<int:n>/', methods = ['POST'])
-def lowPassButterworthFilter(D0, n):
+def lowPassButterworthFilterHandler(D0, n):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.lowPassButterworthFilter(D0, n, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.divide(1, np.add(1, np.power(np.divide(D, D0), 2 * n)))
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
@@ -240,33 +119,13 @@ def lowPassButterworthFilter(D0, n):
 
 # Funcion que aplica un filtro butterworth pasa altas a una imagen
 @app.route('/high-pass-butterworth-filter/<int:D0>/<int:n>/', methods = ['POST'])
-def highPassButterworthFilter(D0, n):
+def highPassButterworthFilterHandler(D0, n):
     content = request.json
-    utils.decodeB64Image(content["image"])
+    utils.decodeB64Image(content["image"], "image.jpg")
 
-    A = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
+    op.highPassButterworthFilter(D0, n, "image.jpg", "image.jpg")
 
-    A = np.double(A)
-    F = np.fft.fft2(A)
-
-    Fshift = np.fft.fftshift(F)
-
-    D = utils.DMatrixCalculation(A)
-
-    Fmask = np.divide(1, np.add(1, np.power(np.divide(D0, D), 2 * n)))
-
-    Fmask = np.fft.fftshift(Fmask)
-
-    Fresult = np.fft.fftshift(np.multiply(F, Fmask))
-
-    Fresult = np.fft.fftshift(Fresult)
-
-    B = np.fft.ifft2(Fresult)
-    B = np.uint8(np.abs(B))
-
-    cv2.imwrite("image.jpg", B)
-
-    base64Image = (utils.encodeB64Image()).decode("utf-8")
+    base64Image = (utils.encodeB64Image("image.jpg")).decode("utf-8")
 
     os.remove("image.jpg")
 
