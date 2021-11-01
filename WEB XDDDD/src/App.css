@@ -1,0 +1,19 @@
+.App,
+html,
+#root,
+body {
+  height: 100%;
+  overflow-x: auto;
+}
+
+.App {
+  background-color: #13262f;
+  background-image: url("./bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.App * {
+  margin: 0;
+  padding: 0;
+}
