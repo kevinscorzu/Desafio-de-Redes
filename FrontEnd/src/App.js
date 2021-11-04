@@ -41,7 +41,7 @@ const Input = styled.div`
   }
 `;
 
-const BASE_URL = "http://10.0.0.4:2727";
+const BASE_URL = "http://40.84.176.73:2727";
 
 const FILTERS = {
   "Ecualización de Histograma": [],
