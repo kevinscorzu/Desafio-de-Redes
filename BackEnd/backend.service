@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=schlafenhase
-ExecStart=/usr/bin/env python3 /home/schlafenhase/BackEnd/main.py
+ExecStart=python3 /home/schlafenhase/BackEnd/main.py
 
 [Install]
 WantedBy=multi-user.target
