@@ -20,7 +20,7 @@ class TestOperations(unittest.TestCase):
 
         bsocket.close()
         
-        self.assertEqual(result, 0, "El puerto 2727 no esta abierto: F")
+        self.assertEqual(result, 0, "El puerto 2727 no esta abierto: B")
 
 if __name__ == '__main__':
     unittest.main()
